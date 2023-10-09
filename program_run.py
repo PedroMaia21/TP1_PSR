@@ -7,6 +7,9 @@ import readchar #Read keys
 from time import time, ctime            #Time related functions
 from colorama import Fore, Back, Style  #Color for the mainstyle
 from readchar import readkey, key       #read keys
+from collections import namedtuple      #Use namedtuples
+
+Input = namedtuple('Input', ['requested', 'received', 'duration']) #tupple to store the variables
 
 #main program function
 def runProgram(timeMode, maxValue, useWords):
@@ -15,47 +18,63 @@ def runProgram(timeMode, maxValue, useWords):
     wordFile = "palavras.txt"
     WORDS = open(wordFile).read().splitlines()
 
-    #main vars of completetion reseted
+    #main vars for stats and for stoping reseted
     startTime = time()
+    startDate = ctime()
     wordWritten = 0
     spacePressed = False
+    numberInputs = 0
+    numberHits = 0
 
     #Check if its time mode or words mode
     if timeMode:
-        conditionEnd='Time'
+        conditionEnd = 'Time'
     else:
-        conditionEnd='Words'
+        conditionEnd = 'Words'
     
     #Main logic of the program
     if useWords:
         while True: #Mode of words
 
+            inputStartTime = time()             #Getting the time the input started
+
             randomWord = random.choice(WORDS)   #Generate the word
-            size=len(randomWord)                #Get the lenght of the word
+            size = len(randomWord)                #Get the lenght of the word
             print(randomWord)                   #Show the word
-            print('')                           #Just a visual element
             
             #Cicle to wait for the whole word be typed
-            keys=''
+            isWrong = False
+            keys = ''
             for i in range(0,size):
                 k = readkey()
                 keys += k
-                
+
+                if k != randomWord[i]:          #this verifies if there is any lether wrong
+                    isWrong = True
+                else:
+                    numberHits += 1
+
                 if k == " ":                    #Note: Spacebar has to interrupt the for cicle before the while cicle
                     spacePressed = True
                     break
             
-            #Cicle to verify if the word its correct or not
-            for i in range(0,size):
-                if keys[i] != randomWord[i]:
-                    print('Wrong')
-                else:
-                    print('Correct')
-            print('')
+            if isWrong:
+                print('Wrong - Wrote: ' + str(keys))
+            else:
+                print('Correct - Wrote: ' + str(keys))
+
+            print('')                           #Just a visual element
 
             #Increase in the completition vars
             nowTime = time()
             wordWritten += 1
+            numberInputs += 1
+
+            inputDuration = nowTime - inputStartTime
+
+            #Storing the data in tupple form
+            inputData = Input(randomWord, keys, inputDuration)
+
 
             #Verify if the completition conditions were satisfied
             if conditionEnd == 'Time' and nowTime - startTime >= maxValue:
@@ -75,13 +94,20 @@ def runProgram(timeMode, maxValue, useWords):
 
             #Verification process
             if k == randomChar:
-                print('Correct')
+                print('Correct - Pressed: ' + str(k))
+                numberHits += 1
             else:
-                print('Wrong')
+                print('Wrong - Pressed: ' + str(k))
 
-            #Increase in the completition vars            
+            #Increase in stats and stopping vars            
             nowTime = time()
             wordWritten += 1
+            numberInputs += 1
+
+            inputDuration = nowTime - inputStartTime
+
+            #Storing the data in tupple form
+            inputData = Input(randomChar, k, inputDuration)
 
             #Verify if the completition conditions were satisfied
             if conditionEnd == 'Time' and nowTime - startTime >= maxValue:
@@ -90,6 +116,12 @@ def runProgram(timeMode, maxValue, useWords):
                 break
             if k == " ":
                 break
+    
+    #Saving the end time of the test and calculating duration
+    endTime = time()
+    endDate = ctime()
+    testDuration = endTime - startTime
+    accuracyHits = numberHits / numberInputs
 
     print('Programa terminado')
     return
