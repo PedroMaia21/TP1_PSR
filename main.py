@@ -2,6 +2,9 @@
 
 #import section
 import argparse
+import readchar
+
+from program_run import runProgram
 
 #Main running code
 def main():
@@ -18,6 +21,26 @@ def main():
     
     #Create the vars to store or execute the arguments
     args = vars (parser.parse_args())
+
+    if args['use_time_mode']:
+        modeString='time mode'
+        numberString='have a duration of ' + str(args['max_value']) + ' seconds'
+    else:
+        modeString='number of inputs mode'
+        numberString='consist in a number of ' + str(args['max_value']) + 'levels'
+
+    if args['use_words']:
+        modeString2='type words'
+    else:
+        modeString2='type single characters'
+
+    print('Initializing program in '+ modeString)
+    print('The game will '+ numberString)
+    print('Your objective is to ' +modeString2 + ' the quickest and most correctly as possible')
+    print('When you are ready, press [ENTER] to start the challenge')
+    key=readkey()
+    if key==key.ENTER:
+        runProgram()
 
 if __name__ == "__main__":
     main()
