@@ -5,6 +5,7 @@ import argparse
 import readchar
 
 from program_run import runProgram
+from readchar import readkey, key
 
 #Main running code
 def main():
@@ -38,9 +39,11 @@ def main():
     print('The game will '+ numberString)
     print('Your objective is to ' +modeString2 + ' the quickest and most correctly as possible')
     print('When you are ready, press [ENTER] to start the challenge')
-    key=readkey()
-    if key==key.ENTER:
-        runProgram()
+    
+    while True:
+        k = readkey()
+        if k==key.ENTER:
+            runProgram()
 
 if __name__ == "__main__":
     main()
