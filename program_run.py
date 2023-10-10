@@ -25,6 +25,10 @@ def runProgram(timeMode, maxValue, useWords):
     spacePressed = False
     numberInputs = 0
     numberHits = 0
+    numberMiss = 0
+    inputDuration = []
+    hitDuration = []
+    missDuration = []
 
     #Check if its time mode or words mode
     if timeMode:
@@ -51,30 +55,31 @@ def runProgram(timeMode, maxValue, useWords):
 
                 if k != randomWord[i]:          #this verifies if there is any lether wrong
                     isWrong = True
-                else:
-                    numberHits += 1
 
                 if k == " ":                    #Note: Spacebar has to interrupt the for cicle before the while cicle
                     spacePressed = True
                     break
             
-            if isWrong:
-                print('Wrong - Wrote: ' + str(keys))
-            else:
-                print('Correct - Wrote: ' + str(keys))
-
-            print('')                           #Just a visual element
-
             #Increase in the completition vars
             nowTime = time()
             wordWritten += 1
             numberInputs += 1
 
-            inputDuration = nowTime - inputStartTime
+            inputDuration.append(nowTime - inputStartTime)
+
+            if isWrong:
+                print('Wrong - Wrote: ' + str(keys))
+                numberMiss += 1
+                missDuration.append(inputDuration[-1])
+            else:
+                print('Correct - Wrote: ' + str(keys))
+                numberHits += 1
+                hitDuration.append(inputDuration[-1])
+
+            print('')                           #Just a visual element
 
             #Storing the data in tupple form
             inputData = Input(randomWord, keys, inputDuration)
-
 
             #Verify if the completition conditions were satisfied
             if conditionEnd == 'Time' and nowTime - startTime >= maxValue:
@@ -87,24 +92,29 @@ def runProgram(timeMode, maxValue, useWords):
     else:
         while True: #Mode of chars
 
+            inputStartTime = time()             #Getting the time the input started
+
             randomChar = random.choice('abcdefghijklmnopqrstuvwxyz')    #Generate the char
             print(randomChar)                                           #Show the char
             print('')                                                   #Just a visual element
             k = readkey()                                               #Wait for the typing
-
-            #Verification process
-            if k == randomChar:
-                print('Correct - Pressed: ' + str(k))
-                numberHits += 1
-            else:
-                print('Wrong - Pressed: ' + str(k))
 
             #Increase in stats and stopping vars            
             nowTime = time()
             wordWritten += 1
             numberInputs += 1
 
-            inputDuration = nowTime - inputStartTime
+            inputDuration.append(nowTime - inputStartTime)
+
+            #Verification process
+            if k == randomChar:
+                print('Correct - Pressed: ' + str(k))
+                numberHits += 1
+                hitDuration.append(inputDuration[-1])
+            else:
+                print('Wrong - Pressed: ' + str(k))
+                numberMiss += 1
+                missDuration.append(inputDuration[-1])
 
             #Storing the data in tupple form
             inputData = Input(randomChar, k, inputDuration)
@@ -121,7 +131,23 @@ def runProgram(timeMode, maxValue, useWords):
     endTime = time()
     endDate = ctime()
     testDuration = endTime - startTime
-    accuracyHits = numberHits / numberInputs
+    accuracy = numberHits / numberInputs
+    typeAverageDuration = sum(inputDuration) / numberInputs
+    hitAverageDuration = sum(hitDuration) / numberHits
+    missAverageDuration = sum(missDuration) / numberMiss
+
+    result = {
+        "Test Start": startTime,
+        "Test End": endDate,
+        "Test Duration": testDuration,
+        "Number of Types": numberInputs,
+        "Number of Hits": numberHits,
+        "Accuracy": accuracy,
+        "Type Average Duration": typeAverageDuration,
+        "Hit Average Duration": hitAverageDuration,
+        "Miss Average Duration": missAverageDuration
+    }
 
     print('Programa terminado')
+    print(result)
     return
