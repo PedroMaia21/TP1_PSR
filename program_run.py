@@ -8,6 +8,7 @@ from time import time, ctime            #Time related functions
 from colorama import Fore, Back, Style  #Color for the mainstyle
 from readchar import readkey, key       #read keys
 from collections import namedtuple      #Use namedtuples
+from pprint import pprint               #Pretty-print
 
 Input = namedtuple('Input', ['requested', 'received', 'duration']) #tupple to store the variables
 
@@ -19,16 +20,16 @@ def runProgram(timeMode, maxValue, useWords):
     WORDS = open(wordFile).read().splitlines()
 
     #main vars for stats and for stoping reseted
-    startTime = time()
-    startDate = ctime()
-    wordWritten = 0
-    spacePressed = False
-    numberInputs = 0
-    numberHits = 0
-    numberMiss = 0
-    inputDuration = []
+    startTime = time()          #Start Time
+    startDate = ctime()         #Start Date
+    spacePressed = False        #Ensuring that this ending var starts false
+    numberInputs = 0            #Reset number of inputs
+    numberHits = 0              #Reset number of hits
+    numberMiss = 0              #Reset number of miss
+    inputDuration = []          #Empty lists to append values later
     hitDuration = []
     missDuration = []
+    inputData = []
 
     #Check if its time mode or words mode
     if timeMode:
@@ -43,7 +44,7 @@ def runProgram(timeMode, maxValue, useWords):
             inputStartTime = time()             #Getting the time the input started
 
             randomWord = random.choice(WORDS)   #Generate the word
-            size = len(randomWord)                #Get the lenght of the word
+            size = len(randomWord)              #Get the lenght of the word
             print(randomWord)                   #Show the word
             
             #Cicle to wait for the whole word be typed
@@ -62,11 +63,11 @@ def runProgram(timeMode, maxValue, useWords):
             
             #Increase in the completition vars
             nowTime = time()
-            wordWritten += 1
             numberInputs += 1
 
             inputDuration.append(nowTime - inputStartTime)
 
+            #Verifying process
             if isWrong:
                 print('Wrong - Wrote: ' + str(keys))
                 numberMiss += 1
@@ -79,27 +80,27 @@ def runProgram(timeMode, maxValue, useWords):
             print('')                           #Just a visual element
 
             #Storing the data in tupple form
-            inputData = Input(randomWord, keys, inputDuration)
+            inputData.append(Input(randomWord, keys, inputDuration[-1]))
 
             #Verify if the completition conditions were satisfied
-            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:
+            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
                 break
-            if conditionEnd == 'Words' and wordWritten >= maxValue:
+            if conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
                 break
-            if spacePressed:
+            if spacePressed:                                                #Ending with spacebar
                 break
 
     else:
         while True: #Mode of chars
 
-            inputStartTime = time()             #Getting the time the input started
+            inputStartTime = time()             #Getting the time of the input started
 
             randomChar = random.choice('abcdefghijklmnopqrstuvwxyz')    #Generate the char
             print(randomChar)                                           #Show the char
             print('')                                                   #Just a visual element
             k = readkey()                                               #Wait for the typing
 
-            #Increase in stats and stopping vars            
+            #Increment stats and stopping vars            
             nowTime = time()
             wordWritten += 1
             numberInputs += 1
@@ -107,47 +108,59 @@ def runProgram(timeMode, maxValue, useWords):
             inputDuration.append(nowTime - inputStartTime)
 
             #Verification process
-            if k == randomChar:
+            if k == randomChar:                         #Its Correct
                 print('Correct - Pressed: ' + str(k))
                 numberHits += 1
                 hitDuration.append(inputDuration[-1])
-            else:
+            else:                                       #Its Wrong
                 print('Wrong - Pressed: ' + str(k))
                 numberMiss += 1
                 missDuration.append(inputDuration[-1])
 
             #Storing the data in tupple form
-            inputData = Input(randomChar, k, inputDuration)
+            inputData.append(Input(randomChar, k, inputDuration[-1]))
 
             #Verify if the completition conditions were satisfied
-            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:
+            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
                 break
-            if conditionEnd == 'Words' and wordWritten >= maxValue:
+            if conditionEnd == 'Words' and wordWritten >= maxValue:         #Ending with number of words
                 break
-            if k == " ":
+            if k == " ":                                                    #Ending with spacebar
                 break
     
-    #Saving the end time of the test and calculating duration
-    endTime = time()
-    endDate = ctime()
-    testDuration = endTime - startTime
-    accuracy = numberHits / numberInputs
-    typeAverageDuration = sum(inputDuration) / numberInputs
-    hitAverageDuration = sum(hitDuration) / numberHits
-    missAverageDuration = sum(missDuration) / numberMiss
+    #Avoiding diving for zero
+    if numberInputs == 0:
+        numberInputs = 1
+    if numberHits == 0:
+        numberHits = 1
+    if numberMiss == 0:
+        numberMiss = 1
 
+    #Saving the end time of the test and calculating duration
+    endTime = time()                                            #Time of ending
+    endDate = ctime()                                           #Date of ending
+    testDuration = endTime - startTime                          #Duration of the test
+    accuracy = numberHits / numberInputs * 100                  #Accuracy of the test
+    typeAverageDuration = sum(inputDuration) / numberInputs     #Average duration
+    hitAverageDuration = sum(hitDuration) / numberHits          #Average duration of the hits
+    missAverageDuration = sum(missDuration) / numberMiss        #Average duration of the miss
+
+    #Dictionary with all the stats vars
     result = {
-        "Test Start": startTime,
+        "Inputs": inputData,
+        "Test Start": startDate,
         "Test End": endDate,
         "Test Duration": testDuration,
         "Number of Types": numberInputs,
         "Number of Hits": numberHits,
+        "Number of Miss": numberMiss,
         "Accuracy": accuracy,
         "Type Average Duration": typeAverageDuration,
         "Hit Average Duration": hitAverageDuration,
         "Miss Average Duration": missAverageDuration
     }
 
-    print('Programa terminado')
-    print(result)
+    #Printing the end of the programm
+    print('')
+    pprint(result)
     return
