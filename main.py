@@ -6,14 +6,19 @@ import readchar #read keys
 
 from program_run import runProgram #function to not pollute the main
 from readchar import readkey, key #read keys
+from colorama import Fore, Back, Style  #Color for the style
+
 
 #Main running code
 def main():
 
     #Principal elements of the help text
     parser = argparse.ArgumentParser( 
-                    prog='Typing Velocity Test',
-                    description='A program that executes a typing test. You can choose to use time mode or number of words, choose the maximum value and choose between words or characters',
+                    prog=Fore.LIGHTBLUE_EX+Style.BRIGHT+'Typing Velocity Test'+Style.RESET_ALL,
+                    description=Style.BRIGHT+Fore.YELLOW+'A program that executes a typing test.'+Style.RESET_ALL+' You can choose to use '
+                    +Style.BRIGHT+Fore.LIGHTCYAN_EX+'time mode or number of words,'+Style.RESET_ALL+' choose the'
+                    +Style.BRIGHT+Fore.LIGHTCYAN_EX+' maximum value'+Style.RESET_ALL+' and choose between'
+                    +Style.BRIGHT+Fore.LIGHTCYAN_EX+' words or characters'+Style.RESET_ALL,
                     epilog='Pedro Maia, Salomé Dias, Vitor Gomes. UA PSR - 23/24')
     
     #Arguments for the program: 'time mode', 'max value' and 'use words'

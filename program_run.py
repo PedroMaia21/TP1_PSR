@@ -5,7 +5,7 @@ import random   #Generate random values
 import readchar #Read keys
 
 from time import time, ctime            #Time related functions
-from colorama import Fore, Back, Style  #Color for the mainstyle
+from colorama import Fore, Back, Style  #Color for the style
 from readchar import readkey, key       #read keys
 from collections import namedtuple      #Use namedtuples
 from pprint import pprint               #Pretty-print
@@ -102,7 +102,6 @@ def runProgram(timeMode, maxValue, useWords):
 
             #Increment stats and stopping vars            
             nowTime = time()
-            wordWritten += 1
             numberInputs += 1
 
             inputDuration.append(nowTime - inputStartTime)
