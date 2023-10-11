@@ -6,7 +6,7 @@ import readchar #Read keys
 
 from time import time, ctime            #Time related functions
 from colorama import Fore, Back, Style  #Color for the style
-from readchar import readkey, key       #read keys
+from readchar import readkey, key       #Read keys
 from collections import namedtuple      #Use namedtuples
 from pprint import pprint               #Pretty-print
 
@@ -45,7 +45,7 @@ def runProgram(timeMode, maxValue, useWords):
 
             randomWord = random.choice(WORDS)   #Generate the word
             size = len(randomWord)              #Get the lenght of the word
-            print(randomWord)                   #Show the word
+            printBox(randomWord)                #Show the word
             
             #Cicle to wait for the whole word be typed
             isWrong = False
@@ -53,11 +53,12 @@ def runProgram(timeMode, maxValue, useWords):
             for i in range(0,size):
                 k = readkey()
                 keys += k
+                print(k,end='',flush=True)
 
                 if k != randomWord[i]:          #this verifies if there is any lether wrong
                     isWrong = True
 
-                if k == " ":                    #Note: Spacebar has to interrupt the for cicle before the while cicle
+                if k == " ":                    #Spacebar has to interrupt the for cicle before the while cicle
                     spacePressed = True
                     break
             
@@ -67,27 +68,29 @@ def runProgram(timeMode, maxValue, useWords):
 
             inputDuration.append(nowTime - inputStartTime)
 
+            print() #Just a visual cleaning element
+            
             #Verifying process
             if isWrong:
-                print('Wrong - Wrote: ' + str(keys))
+                print(Fore.RED+Style.BRIGHT+'Wrong - You wrote: ' + str(keys)+Style.RESET_ALL)
                 numberMiss += 1
                 missDuration.append(inputDuration[-1])
             else:
-                print('Correct - Wrote: ' + str(keys))
+                print(Fore.GREEN+Style.BRIGHT+'Correct - You wrote: ' + str(keys)+Style.RESET_ALL)
                 numberHits += 1
                 hitDuration.append(inputDuration[-1])
 
-            print('')                           #Just a visual element
+            print() #Just a visual element
 
             #Storing the data in tupple form
-            inputData.append(Input(randomWord, keys, inputDuration[-1]))
+            inputData.append(Input(randomWord, keys, f"{inputDuration[-1]:.2f}"))
 
             #Verify if the completition conditions were satisfied
-            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
+            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:      #Ending with time
                 break
-            if conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
+            elif conditionEnd == 'Words' and numberInputs >= maxValue:          #Ending with number of words
                 break
-            if spacePressed:                                                #Ending with spacebar
+            elif spacePressed:                                                  #Ending with spacebar
                 break
 
     else:
@@ -96,35 +99,36 @@ def runProgram(timeMode, maxValue, useWords):
             inputStartTime = time()             #Getting the time of the input started
 
             randomChar = random.choice('abcdefghijklmnopqrstuvwxyz')    #Generate the char
-            print(randomChar)                                           #Show the char
-            print('')                                                   #Just a visual element
+            printBox(randomChar)                                        #Show the char
             k = readkey()                                               #Wait for the typing
+            print()                                                     #Just a visual element
+
 
             #Increment stats and stopping vars            
             nowTime = time()
             numberInputs += 1
-
+            
             inputDuration.append(nowTime - inputStartTime)
 
             #Verification process
             if k == randomChar:                         #Its Correct
-                print('Correct - Pressed: ' + str(k))
+                print(Fore.GREEN+Style.BRIGHT+'Correct - Pressed: ' + str(k)+Style.RESET_ALL)
                 numberHits += 1
                 hitDuration.append(inputDuration[-1])
             else:                                       #Its Wrong
-                print('Wrong - Pressed: ' + str(k))
+                print(Fore.RED+Style.BRIGHT+'Wrong - Pressed: ' + str(k)+Style.RESET_ALL)
                 numberMiss += 1
                 missDuration.append(inputDuration[-1])
 
             #Storing the data in tupple form
-            inputData.append(Input(randomChar, k, inputDuration[-1]))
+            inputData.append(Input(randomChar, k, f"{inputDuration[-1]:.2f}"))
 
             #Verify if the completition conditions were satisfied
             if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
                 break
-            if conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
+            elif conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
                 break
-            if k == " ":                                                    #Ending with spacebar
+            elif k == " ":                                                    #Ending with spacebar
                 break
     
     #Avoiding diving for zero
@@ -144,22 +148,41 @@ def runProgram(timeMode, maxValue, useWords):
     hitAverageDuration = sum(hitDuration) / numberHits          #Average duration of the hits
     missAverageDuration = sum(missDuration) / numberMiss        #Average duration of the miss
 
+    #Formating the main vars to declutter the final visual
+    fAccuracy = str(f"{accuracy:.1f}")+'%'
+    fHitDuration = f"{hitAverageDuration:.2f}"
+    fMissDuration = f"{missAverageDuration:.2f}"
+    fTestDuration = f"{testDuration:.2f}"
+    fTypeDuration = f"{typeAverageDuration:.2f}"
+
     #Dictionary with all the stats vars
     result = {
         "Inputs": inputData,
         "Test Start": startDate,
         "Test End": endDate,
-        "Test Duration": testDuration,
+        "Test Duration": fTestDuration,
         "Number of Types": numberInputs,
         "Number of Hits": numberHits,
         "Number of Miss": numberMiss,
-        "Accuracy": accuracy,
-        "Type Average Duration": typeAverageDuration,
-        "Hit Average Duration": hitAverageDuration,
-        "Miss Average Duration": missAverageDuration
+        "Accuracy": fAccuracy,
+        "Type Average Duration": fTypeDuration,
+        "Hit Average Duration": fHitDuration,
+        "Miss Average Duration": fMissDuration
     }
 
     #Printing the end of the programm
-    print('')
+    print()
     pprint(result)
     return
+
+#Function that creates a visual box to include the word/character
+def printBox(text):
+    textLength = len(text)
+    border = "+" + "-" * (textLength + 2) + "+"
+    emptyLine = "|" + " " * (textLength + 2) + "|"
+    
+    print(border)
+    print(emptyLine)
+    print(f"| {text} |")
+    print(emptyLine)
+    print(border)
