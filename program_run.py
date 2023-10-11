@@ -40,7 +40,6 @@ def runProgram(timeMode, maxValue, useWords):
     #Main logic of the program
     if useWords:
         while True: #Mode of words
-
             inputStartTime = time()             #Getting the time the input started
 
             randomWord = random.choice(WORDS)   #Generate the word
@@ -80,19 +79,23 @@ def runProgram(timeMode, maxValue, useWords):
                 numberHits += 1
                 hitDuration.append(inputDuration[-1])
 
-            print() #Just a visual element
-
             #Storing the data in tupple form
             inputData.append(Input(randomWord, keys, f"{inputDuration[-1]:.2f}"))
 
             #Verify if the completition conditions were satisfied
-            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:      #Ending with time
-                break
+            if conditionEnd == 'Time':
+                progress = (nowTime - startTime) / maxValue
+
+                if nowTime - startTime >= maxValue:                             #Ending in time limit
+                    break
+
             elif conditionEnd == 'Words' and numberInputs >= maxValue:          #Ending with number of words
                 break
             elif spacePressed:                                                  #Ending with spacebar
                 break
 
+            progressBar(progress)
+            print()
     else:
         while True: #Mode of chars
 
@@ -186,3 +189,13 @@ def printBox(text):
     print(f"| {text} |")
     print(emptyLine)
     print(border)
+    print()
+
+#Function to create a progress bar and update it
+def progressBar(progress):
+    barLength = 20
+    completedLength = int(barLength * progress)     #How much of the bar is completed
+    remainingLength = barLength - completedLength   #How much is remaining
+    completedPart = Fore.GREEN + '-' * completedLength
+    remainingPart = Fore.RESET + ' ' * remainingLength
+    print(Style.BRIGHT+'|'+completedPart + remainingPart+'| -> Progress: '+str(int(progress*100))+'%'+Style.RESET_ALL)  # Print the progress bar, and use '\r' to overwrite the same line

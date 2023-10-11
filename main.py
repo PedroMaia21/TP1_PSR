@@ -70,7 +70,7 @@ def main():
     time.sleep(0.5)     #Making a small transition
     print(Fore.YELLOW+ 'The game will ' + numberString + Style.RESET_ALL)
     print()
-    time.sleep(0.5)
+    time.sleep(0.75)
     print('Your objective is to ' +modeString2 + ' the '+Fore.BLUE+Style.BRIGHT+'quickest and most correctly as possible'+Style.RESET_ALL)
     print()
     time.sleep(1)
