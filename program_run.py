@@ -122,7 +122,7 @@ def runProgram(timeMode, maxValue, useWords):
             #Verify if the completition conditions were satisfied
             if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
                 break
-            if conditionEnd == 'Words' and wordWritten >= maxValue:         #Ending with number of words
+            if conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
                 break
             if k == " ":                                                    #Ending with spacebar
                 break
