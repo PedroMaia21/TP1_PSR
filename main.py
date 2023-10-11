@@ -19,7 +19,7 @@ def main():
                     +Style.BRIGHT+Fore.LIGHTCYAN_EX+'time mode or number of words,'+Style.RESET_ALL+' choose the'
                     +Style.BRIGHT+Fore.LIGHTCYAN_EX+' maximum value'+Style.RESET_ALL+' and choose between'
                     +Style.BRIGHT+Fore.LIGHTCYAN_EX+' words or characters'+Style.RESET_ALL,
-                    epilog='Pedro Maia, Salomé Dias, Vitor Gomes. UA PSR - 23/24')
+                    epilog=Style.BRIGHT+'Pedro Maia, Salomé Dias, Vitor Gomes. UA PSR - 23/24'+Style.RESET_ALL)
     
     #Arguments for the program: 'time mode', 'max value' and 'use words'
     parser.add_argument('-utm', '--use_time_mode', help='option to use time mode insted of number of inputs (default)', action='store_true', default=False)
