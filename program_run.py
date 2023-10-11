@@ -3,8 +3,8 @@
 #Import section
 import random   #Generate random values
 import readchar #Read keys
+import time     #Time functions
 
-from time import time, ctime            #Time related functions
 from colorama import Fore, Back, Style  #Color for the style
 from readchar import readkey, key       #Read keys
 from collections import namedtuple      #Use namedtuples
@@ -24,8 +24,8 @@ def runProgram(timeMode, maxValue, useWords, english):
     WORDS = open(wordFile).read().splitlines()
 
     #main vars for stats and for stoping reseted
-    startTime = time()          #Start Time
-    startDate = ctime()         #Start Date
+    startTime = time.time()          #Start Time
+    startDate = time.ctime()         #Start Date
     spacePressed = False        #Ensuring that this ending var starts false
     numberInputs = 0            #Reset number of inputs
     numberHits = 0              #Reset number of hits
@@ -44,7 +44,7 @@ def runProgram(timeMode, maxValue, useWords, english):
     #Main logic of the program
     if useWords:
         while True: #Mode of words
-            inputStartTime = time()                 #Getting the time the input started
+            inputStartTime = time.time()                 #Getting the time the input started
 
             while True: #Note: this cicle was made because some of the english words were too small. For the pr version, it wasn't needed
                 randomWord = random.choice(WORDS)   #Generate the word
@@ -69,7 +69,7 @@ def runProgram(timeMode, maxValue, useWords, english):
                     break
             
             #Increase in the completition vars
-            nowTime = time()
+            nowTime = time.time()
             numberInputs += 1
 
             inputDuration.append(nowTime - inputStartTime)
@@ -110,7 +110,7 @@ def runProgram(timeMode, maxValue, useWords, english):
     else:
         while True: #Mode of chars
 
-            inputStartTime = time()             #Getting the time of the input started
+            inputStartTime = time.time()             #Getting the time of the input started
 
             randomChar = random.choice('abcdefghijklmnopqrstuvwxyz')    #Generate the char
             printBox(randomChar)                                        #Show the char
@@ -119,7 +119,7 @@ def runProgram(timeMode, maxValue, useWords, english):
 
 
             #Increment stats and stopping vars            
-            nowTime = time()
+            nowTime = time.time()
             numberInputs += 1
             
             inputDuration.append(nowTime - inputStartTime)
@@ -166,8 +166,8 @@ def runProgram(timeMode, maxValue, useWords, english):
         numberMiss = 1
 
     #Saving the end time of the test and calculating duration
-    endTime = time()                                            #Time of ending
-    endDate = ctime()                                           #Date of ending
+    endTime = time.time()                                            #Time of ending
+    endDate = time.ctime()                                           #Date of ending
     testDuration = endTime - startTime                          #Duration of the test
     accuracy = numberHits / numberInputs * 100                  #Accuracy of the test
     typeAverageDuration = sum(inputDuration) / numberInputs     #Average duration
@@ -195,6 +195,53 @@ def runProgram(timeMode, maxValue, useWords, english):
         "Hit Average Duration": fHitDuration,
         "Miss Average Duration": fMissDuration
     }
+
+    print(Style.BRIGHT+Fore.YELLOW+'Program ended.'+Style.NORMAL+'\nProcessing stats')
+    print()
+    time.sleep(2)
+
+    if accuracy >= 75:
+        print(Style.BRIGHT+Fore.GREEN+'Well done!!!\nAccuracy --> '+fAccuracy+'%'+Style.RESET_ALL)
+    
+    elif accuracy>=50:
+        print(Style.BRIGHT+Fore.YELLOW+'Not bad!\nAccuracy --> '+fAccuracy+'%'+Style.RESET_ALL)        
+    
+    else:
+        print(Style.BRIGHT+Fore.RED+'You can do better!\nAccuracy --> '+fAccuracy+'%'+Style.RESET_ALL)
+    print()
+    time.sleep(2)
+
+    if useWords:
+        if typeAverageDuration > 4:
+            print(Style.BRIGHT+Fore.RED+'Bad typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 3:
+            print(Style.BRIGHT+Fore.LIGHTRED_EX+'Below average typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 2.4:
+            print(Style.BRIGHT+Fore.YELLOW+'Average typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 2:
+            print(Style.BRIGHT+Fore.LIGHTYELLOW_EX+'Above average typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 1.7:
+            print(Style.BRIGHT+Fore.GREEN+'Good typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        else:
+             print(Style.BRIGHT+Fore.LIGHTGREEN_EX+'Professional typing speed\nTime per word: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+
+    else:
+        if typeAverageDuration > 1.2:
+            print(Style.BRIGHT+Fore.RED+'Bad typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 0.9:
+            print(Style.BRIGHT+Fore.LIGHTRED_EX+'Below average typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 0.72:
+            print(Style.BRIGHT+Fore.YELLOW+'Average typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 0.6:
+            print(Style.BRIGHT+Fore.LIGHTYELLOW_EX+'Above average typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        elif typeAverageDuration > 0.51:
+            print(Style.BRIGHT+Fore.GREEN+'Good typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+        else:
+             print(Style.BRIGHT+Fore.LIGHTGREEN_EX+'Professional typing speed\nTime per character: --> '+fTypeDuration+' seconds'+Style.RESET_ALL)
+    print()
+    time.sleep(2)
+    print(Style.BRIGHT+Fore.LIGHTCYAN_EX+'The detailed stats will be printed right away'+Style.RESET_ALL)
+    time.sleep(2)
 
     #Printing the end of the programm
     print()

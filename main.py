@@ -80,13 +80,16 @@ def main():
     print('Your objective is to ' +modeString2 + ' the '+Fore.BLUE+Style.BRIGHT+'quickest and most correctly as possible'+Style.RESET_ALL)
     print()
     time.sleep(1)
-    print('When you are ready, '+Fore.LIGHTRED_EX+Style.BRIGHT+'press [ENTER] to start the challenge'+Style.RESET_ALL)
+    print(Fore.GREEN+'Place your index fingers on the [F] and [J] keys'+Style.RESET_ALL)
+    print()
+    time.sleep(1)
+    print('When you are ready, '+Fore.LIGHTRED_EX+Style.BRIGHT+'press [F] to start the challenge'+Style.RESET_ALL)
     print()
     
     #Cicle to wait for the character and run the main program
     while True:
         k = readkey()
-        if k == key.ENTER:
+        if k == "f":
             runProgram(timeMode,maxValue,useWords,english)
             break
 
