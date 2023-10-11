@@ -13,10 +13,14 @@ from pprint import pprint               #Pretty-print
 Input = namedtuple('Input', ['requested', 'received', 'duration']) #tupple to store the variables
 
 #main program function
-def runProgram(timeMode, maxValue, useWords):
+def runProgram(timeMode, maxValue, useWords, english):
 
     #Get a list of words
-    wordFile = "palavras.txt"
+    if english:
+        wordFile = "wordlist.txt"
+    else:
+        wordFile = "palavras.txt"
+    
     WORDS = open(wordFile).read().splitlines()
 
     #main vars for stats and for stoping reseted
@@ -40,11 +44,14 @@ def runProgram(timeMode, maxValue, useWords):
     #Main logic of the program
     if useWords:
         while True: #Mode of words
-            inputStartTime = time()             #Getting the time the input started
+            inputStartTime = time()                 #Getting the time the input started
 
-            randomWord = random.choice(WORDS)   #Generate the word
-            size = len(randomWord)              #Get the lenght of the word
-            printBox(randomWord)                #Show the word
+            while True: #Note: this cicle was made because some of the english words were too small. For the pr version, it wasn't needed
+                randomWord = random.choice(WORDS)   #Generate the word
+                size = len(randomWord)              #Get the lenght of the word
+                if size >= 4:
+                    printBox(randomWord)            #Show the word
+                    break
             
             #Cicle to wait for the whole word be typed
             isWrong = False
@@ -89,8 +96,12 @@ def runProgram(timeMode, maxValue, useWords):
                 if nowTime - startTime >= maxValue:                             #Ending in time limit
                     break
 
-            elif conditionEnd == 'Words' and numberInputs >= maxValue:          #Ending with number of words
-                break
+            elif conditionEnd == 'Words':
+                progress = numberInputs / maxValue
+                
+                if numberInputs >= maxValue:                                    #Ending in number of words
+                    break
+
             elif spacePressed:                                                  #Ending with spacebar
                 break
 
@@ -127,12 +138,24 @@ def runProgram(timeMode, maxValue, useWords):
             inputData.append(Input(randomChar, k, f"{inputDuration[-1]:.2f}"))
 
             #Verify if the completition conditions were satisfied
-            if conditionEnd == 'Time' and nowTime - startTime >= maxValue:  #Ending with time
+            if conditionEnd == 'Time':
+                progress = (nowTime - startTime) / maxValue                
+                
+                if nowTime - startTime >= maxValue:                             #Ending with time
+                    break
+
+            elif conditionEnd == 'Words':
+                progress = numberInputs / maxValue               
+                
+                if numberInputs >= maxValue:                                    #Ending with number of words
+                    break
+            
+            elif k == " ":                                                      #Ending with spacebar
                 break
-            elif conditionEnd == 'Words' and numberInputs >= maxValue:         #Ending with number of words
-                break
-            elif k == " ":                                                    #Ending with spacebar
-                break
+
+            progressBar(progress)
+            print()
+
     
     #Avoiding diving for zero
     if numberInputs == 0:
@@ -193,7 +216,7 @@ def printBox(text):
 
 #Function to create a progress bar and update it
 def progressBar(progress):
-    barLength = 20
+    barLength = 40
     completedLength = int(barLength * progress)     #How much of the bar is completed
     remainingLength = barLength - completedLength   #How much is remaining
     completedPart = Fore.GREEN + '-' * completedLength

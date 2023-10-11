@@ -41,6 +41,11 @@ def main():
                         help='If'+Style.BRIGHT+Fore.LIGHTCYAN_EX+' used'+Style.RESET_ALL+', the program will run in '+Fore.YELLOW+'words mode'+Style.RESET_ALL+'\nIf '+Style.BRIGHT+Fore.LIGHTRED_EX+'ignored'+Style.RESET_ALL+', it will run in '+Fore.YELLOW+'characters mode'+Style.RESET_ALL,
                         action='store_true',
                         default=False)
+    parser.add_argument('-en',
+                        '--english_words', 
+                        help='If'+Style.BRIGHT+Fore.LIGHTCYAN_EX+' used'+Style.RESET_ALL+', the words will be generated in '+Fore.YELLOW+'english'+Style.RESET_ALL+'\nIf '+Style.BRIGHT+Fore.LIGHTRED_EX+'ignored'+Style.RESET_ALL+', they will be generated in '+Fore.YELLOW+'portuguese'+Style.RESET_ALL+Style.DIM+'\nNote: This is irrelevant without word mode on'+Style.RESET_ALL,
+                        action='store_true',
+                        default=False)
     
     #Creating the vars to store or execute the arguments
     args = vars (parser.parse_args())
@@ -49,6 +54,7 @@ def main():
     timeMode = args['use_time_mode']
     maxValue = args['max_value']
     useWords = args['use_words']
+    english = args['english_words']
 
     #Creating the strings to show in the introduction
     if timeMode:
@@ -56,7 +62,7 @@ def main():
         numberString='have a duration of '+Style.BRIGHT+Fore.LIGHTYELLOW_EX + str(maxValue) + ' seconds' +Style.RESET_ALL
     else:
         modeString='number of inputs mode'
-        numberString='consist in a number of '+Style.BRIGHT+Fore.LIGHTYELLOW_EX + str(maxValue) + 'levels' +Style.RESET_ALL
+        numberString='consist in a number of '+Style.BRIGHT+Fore.LIGHTYELLOW_EX + str(maxValue) + ' levels' +Style.RESET_ALL
 
     if useWords:
         modeString2=Style.BRIGHT+Fore.LIGHTCYAN_EX+'type words'+Style.RESET_ALL
@@ -81,7 +87,7 @@ def main():
     while True:
         k = readkey()
         if k == key.ENTER:
-            runProgram(timeMode,maxValue,useWords)
+            runProgram(timeMode,maxValue,useWords,english)
             break
 
 if __name__ == "__main__":
