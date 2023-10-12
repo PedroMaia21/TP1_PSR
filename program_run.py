@@ -96,13 +96,13 @@ def runProgram(timeMode, maxValue, useWords, english):
                 if nowTime - startTime >= maxValue:                             #Ending in time limit
                     break
 
-            elif conditionEnd == 'Words':
+            if conditionEnd == 'Words':
                 progress = numberInputs / maxValue
                 
                 if numberInputs >= maxValue:                                    #Ending in number of words
                     break
 
-            elif spacePressed:                                                  #Ending with spacebar
+            if spacePressed:                                                  #Ending with spacebar
                 break
 
             progressBar(progress)
@@ -144,13 +144,13 @@ def runProgram(timeMode, maxValue, useWords, english):
                 if nowTime - startTime >= maxValue:                             #Ending with time
                     break
 
-            elif conditionEnd == 'Words':
+            if conditionEnd == 'Words':
                 progress = numberInputs / maxValue               
                 
                 if numberInputs >= maxValue:                                    #Ending with number of words
                     break
             
-            elif k == " ":                                                      #Ending with spacebar
+            if k == " ":                                                      #Ending with spacebar
                 break
 
             progressBar(progress)
@@ -161,7 +161,9 @@ def runProgram(timeMode, maxValue, useWords, english):
     if numberInputs == 0:
         numberInputs = 1
     if numberHits == 0:
-        numberHits = 1
+        numberHits2 = 1
+    else:
+        numberHits2 = numberHits
     if numberMiss == 0:
         numberMiss = 1
 
@@ -171,7 +173,7 @@ def runProgram(timeMode, maxValue, useWords, english):
     testDuration = endTime - startTime                          #Duration of the test
     accuracy = numberHits / numberInputs * 100                  #Accuracy of the test
     typeAverageDuration = sum(inputDuration) / numberInputs     #Average duration
-    hitAverageDuration = sum(hitDuration) / numberHits          #Average duration of the hits
+    hitAverageDuration = sum(hitDuration) / numberHits2          #Average duration of the hits
     missAverageDuration = sum(missDuration) / numberMiss        #Average duration of the miss
 
     #Formating the main vars to declutter the final visual
@@ -263,6 +265,8 @@ def printBox(text):
 
 #Function to create a progress bar and update it
 def progressBar(progress):
+    if progress >= 1:
+        progress = 1
     barLength = 40
     completedLength = int(barLength * progress)     #How much of the bar is completed
     remainingLength = barLength - completedLength   #How much is remaining
